@@ -1,0 +1,15 @@
+services:
+
+  db:
+    image: postgres:14.5
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+#  cache:
+#    image: redis:7.0.4
+#    restart: always
+#    volumes:
+#      - ./data/cache:/data
