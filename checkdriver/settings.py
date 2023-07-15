@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
 
     'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
