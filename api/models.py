@@ -1,4 +1,5 @@
 from django.db import models
+from decimal import Decimal
 
 CHECK_TYPES = (
     ('kit', 'kitchen'),
@@ -32,3 +33,7 @@ class Check(models.Model):
     def __str__(self):
         order_id = self.order.get('order_id', None)
         return f'Order №{order_id}'
+
+    def get_total_cost(self):
+        return Decimal(sum([item['cost'] for item in self.order.get('items')]))
+

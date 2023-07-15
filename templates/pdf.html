@@ -1,0 +1,36 @@
+<html>
+    <body>
+        <h1>Kosher Meal</h1>
+        <h3>Invoice №{{ order_id }}</h3>
+        <span class="secondary">
+            Time: {% now "jS F Y H:i" %}<br>
+            Printer: {{ check.printer_id }}
+        </span>
+        <h3>Items bought</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td class="num">${{ item.price }}</td>
+                        <td class="num">{{ item.quantity }}</td>
+                        <td class="num">${{ item.cost }}</td>
+                    </tr>
+                {% endfor %}
+                <tr class="total">
+                    <td colspan="3">Total</td>
+                    <td class="num">${{ check.get_total_cost|floatformat:2 }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <span class='paid'>Paid</span>
+    </body>
+</html>

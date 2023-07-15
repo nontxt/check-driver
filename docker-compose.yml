@@ -8,8 +8,10 @@ services:
     ports:
       - "5432:5432"
 
-#  cache:
-#    image: redis:7.0.4
-#    restart: always
-#    volumes:
-#      - ./data/cache:/data
+  cache:
+    image: redis:7.0.4
+    restart: always
+    volumes:
+      - ./data/cache:/data
+    ports:
+      - "6379:6379"

@@ -7,6 +7,7 @@ class ProductSerializer(serializers.Serializer):
     name = serializers.CharField()
     price = serializers.DecimalField(max_digits=5, decimal_places=2)
     quantity = serializers.IntegerField()
+    cost = serializers.DecimalField(max_digits=5, decimal_places=2)
 
 
 class OrderSerializer(serializers.Serializer):
