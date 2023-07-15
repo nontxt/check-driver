@@ -6,8 +6,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, ValidationError
-from rest_framework.status import HTTP_409_CONFLICT
+from rest_framework.status import HTTP_409_CONFLICT, HTTP_201_CREATED
 from rest_framework.viewsets import GenericViewSet
+
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from .serializers import CheckSerializer, OrderSerializer
 from .models import Printer, Check
@@ -26,6 +29,7 @@ class CheckView(GenericViewSet):
         queryset = self.queryset
         return queryset.select_related('printer_id').filter(printer_id__api_key=api_key)
 
+    @swagger_auto_schema(operation_id='pdf')
     @csrf_exempt
     def pdf(self, request, filename, *args, **kwargs):
         """
@@ -38,6 +42,7 @@ class CheckView(GenericViewSet):
         else:
             raise NotFound()
 
+    @swagger_auto_schema(operation_id='pdf-list')
     def pdf_list(self, request, *args, **kwargs):
         """
         Endpoint that return list of available PDF files in the next format:
@@ -55,6 +60,7 @@ class CheckView(GenericViewSet):
         }
         return Response(data)
 
+    @swagger_auto_schema(operation_id='printed')
     def printed(self, request, filename):
         """
         Mark check as 'printed'
@@ -65,6 +71,12 @@ class CheckView(GenericViewSet):
         return Response({'message': 'ok'})
 
 
+@swagger_auto_schema(operation_id='create-order',
+                     method='POST',
+                     request_body=OrderSerializer(),
+                     responses={404: 'Point {point_id} has not any printers',
+                                409: 'Checks for this order already exists.',
+                                201: 'Order has been created.'})
 @api_view(['POST'])
 def create_order(request):
     """
@@ -105,4 +117,4 @@ def create_order(request):
     check_serializer = CheckSerializer(data=data, many=True)
     if check_serializer.is_valid(raise_exception=True):
         check_serializer.save()
-        return Response({'message': 'Order has been created.'})
+        return Response({'message': 'Order has been created.'}, status=HTTP_201_CREATED)

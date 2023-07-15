@@ -1,0 +1,136 @@
+swagger: '2.0'
+info:
+  title: Kosher Meal
+  description: API 
+  contact:
+    email: admin@example.com
+  license:
+    name: BSD License
+  version: v1
+host: 127.0.0.1:8000
+schemes:
+- http
+basePath: /api
+consumes:
+- application/json
+produces:
+- application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+- Basic: []
+paths:
+  /checks/:
+    post:
+      operationId: pdf_list
+      description: |-
+        Endpoint that return list of available PDF files in the next format:
+        {
+            message: ok | empty,
+            files: [str, ...] | []
+        }
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Check'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Check'
+      tags:
+      - pdf_list
+    parameters: []
+  /checks/{filename}:
+    post:
+      operationId: checks_create
+      description: Return PDF file or raise NotFound
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Check'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Check'
+      tags:
+      - checks
+    patch:
+      operationId: checks_partial_update
+      description: Mark check as 'printed'
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Check'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Check'
+      tags:
+      - checks
+    parameters:
+    - name: filename
+      in: path
+      required: true
+      type: string
+  /order/:
+    post:
+      operationId: order_create
+      description: |-
+        Endpoint for creating new order.
+        Take next JSON format:
+        {
+            point_id: int,
+            order_id: int,
+            items: [
+                {name: str, price: float, quantity: int, cost: float},
+                ...
+            ]
+        }
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+      - order
+    parameters: []
+definitions:
+  Check:
+    required:
+    - printer_id
+    - type
+    type: object
+    properties:
+      printer_id:
+        title: Printer id
+        type: integer
+      type:
+        title: Type
+        type: string
+        enum:
+        - kit
+        - cli
+      order:
+        title: Order
+        type: object
+      status:
+        title: Status
+        type: string
+        enum:
+        - n
+        - r
+        - p
+      pdf_file:
+        title: Pdf file
+        type: string
+        readOnly: true
+        format: uri
